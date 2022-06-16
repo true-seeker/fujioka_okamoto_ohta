@@ -13,10 +13,23 @@
     <header class="d-flex justify-content-center py-3">
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="/voter" class="nav-link" aria-current="page" id="nav-voter">Voter</a></li>
-            <li class="nav-item"><a href="/certification_authority" class="nav-link" id="nav-ca">Certification Authority</a></li>
+            <li class="nav-item"><a href="/certification_authority" class="nav-link" id="nav-ca">Certification
+                Authority</a></li>
             <li class="nav-item"><a href="/registrator" class="nav-link" id="nav-registrator">Registrator</a></li>
             <li class="nav-item"><a href="/vote_counter" class="nav-link" id="nav-vote-counter">Vote Counter</a></li>
         </ul>
+        {% if user.is_authenticated %}
+            <div class="col-md-3 text-end">
+                <span class="pt-1">{{ user.username }}</span>
+                <button type="button" class="btn btn-outline-primary"><a href="{% url 'logout' %}">Logout</a></button>
+
+            </div>
+        {% else %}
+            <div class="col-md-3 text-end">
+                <button type="button" class="btn btn-outline-primary me-2"><a href="/voter/login">Login</a></button>
+                <button type="button" class="btn btn-outline-primary"><a href="/voter/signup">Sign up</a></button>
+            </div>
+        {% endif %}
     </header>
 </div>
 {% block body %} {% endblock %}

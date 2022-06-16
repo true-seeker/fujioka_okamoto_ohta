@@ -6,6 +6,6 @@ urlpatterns = [
     path('certification_authority/', include('certification_authority.urls')),
     path('vote_counter/', include('vote_counter.urls')),
     path('voter/', include('voter.urls')),
-    # path('', views.index),
+    path('', include('voter.urls')),
     path('admin/', admin.site.urls),
 ]
