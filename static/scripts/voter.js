@@ -51,3 +51,28 @@ $('#get-keys-from-ca-button').on('click', () => {
         }
     });
 })
+
+$('.voter-choice-radio').on('click', (e) => {
+    e.preventDefault();
+    console.log(e.target);
+    console.log(e.target.dataset.candidateId);
+    $.ajax({
+        url: 'vote',
+        type: 'post',
+        data: {
+            candidate_id: e.target.dataset.candidateId
+        },
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+        // dataType: 'json',
+        success: function (data) {
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                $('.voter-choice-radio').prop('checked', false);
+                $(e.target).prop('checked', true);
+            }
+        }
+    });
+})

@@ -10,13 +10,13 @@
         <div class="w-50">
             <div class="d-flex justify-content-between">
                 <h5>Voters list: </h5>
-                <button class="btn btn-primary mt-1">Reload</button>
             </div>
             <table class="table">
                 <thead>
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">Username</th>
+                    <th scope="col">Public key</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -24,6 +24,7 @@
                     <tr>
                         <th scope="row">{{ voter.id }}</th>
                         <td>{{ voter.username }}</td>
+                        <td>{{ voter.public_key }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -25,7 +25,28 @@
                     <p>Public CA key:</p>
                     <p id="public-ca-key">{{ public_ca_key }}</p>
                 </div>
-
+            </div>
+            <hr>
+            <div>
+                <h4>Voting</h4>
+                <div class="form-check">
+                    <input class="form-check-input voter-choice-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault1" data-candidate-id="1" {% if vote == '1' %} checked {% endif %}>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        Candidate №1
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input voter-choice-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault2" data-candidate-id="2" {% if vote == '2' %} checked {% endif %}>
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        Candidate №2
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input voter-choice-radio" type="radio" name="flexRadioDefault" id="flexRadioDefault3" data-candidate-id="3" {% if vote == '3' %} checked {% endif %}>
+                    <label class="form-check-label" for="flexRadioDefault3">
+                        Candidate №3
+                    </label>
+                </div>
             </div>
         </div>
 

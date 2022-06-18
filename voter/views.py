@@ -7,16 +7,17 @@ from django.shortcuts import render, redirect
 from certification_authority.views import get_public_key, is_keys_exchanged
 from registrator.views import get_raw_registrator_public_key
 
-user_keys = {}
+voter_keys = {}
+votes = {}
 
 
 def index(request):
     if not request.user.is_authenticated:
         return redirect('/voter/login')
 
-    if user_keys.get(request.user.id) is not None:
-        public_key = user_keys[request.user.id][0]
-        private_key = user_keys[request.user.id][1]
+    if voter_keys.get(request.user.id) is not None:
+        public_key = voter_keys[request.user.id][0]
+        private_key = voter_keys[request.user.id][1]
     else:
         public_key, private_key = None, None
 
@@ -34,7 +35,8 @@ def index(request):
                                                                                 f'q={private_key.q}\n'
                                                                                 f'd={private_key.d}',
                                 'public_ca_key': None if public_ca_key is None else f'e={public_ca_key.e}\n'
-                                                                                    f'n={public_ca_key.n}'}))
+                                                                                    f'n={public_ca_key.n}',
+                                'vote': votes.get(request.user.id)}))
 
 
 def user_login(request):
@@ -69,11 +71,11 @@ def user_signup(request):
 
 def generate_keys(request):
     if request.method == 'POST':
-        if is_keys_exchanged():
+        if is_keys_exchanged() and voter_keys.get(request.user.id) is not None:
             return JsonResponse({'message': 'Keys have been exchanged'})
 
         public_key, private_key = rsa.newkeys(128)
-        user_keys[request.user.id] = (public_key, private_key)
+        voter_keys[request.user.id] = (public_key, private_key)
         return JsonResponse({'public_key': f'e={public_key.e}\nn={public_key.n}',
                              'private_key': f'e={private_key.e}\nn={private_key.n}\n'
                                             f'p={private_key.p}\nq={private_key.q}\nd={private_key.d}'})
@@ -81,3 +83,22 @@ def generate_keys(request):
 
 def get_key_from_ca(request):
     return get_public_key(request)
+
+
+def get_voters_with_public_keys():
+    global voter_keys
+    voter_public_keys = {}
+    for i in voter_keys:
+        voter_public_keys[i] = voter_keys[i][0]
+    return voter_public_keys
+
+
+def vote(request):
+    if request.method == 'POST':
+        if voter_keys.get(request.user.id) is None:
+            return JsonResponse({'message': 'Generate your keys first'})
+        if not is_keys_exchanged():
+            return JsonResponse({'message': 'Keys have not been exchaned yet'})
+        else:
+            votes[request.user.id] = request.POST['candidate_id']
+            return JsonResponse({})

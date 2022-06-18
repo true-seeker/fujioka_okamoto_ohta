@@ -11,5 +11,6 @@ urlpatterns = [
 
     path("generate_keys", views.generate_keys, name="generate_keys"),
     path("get_key_from_ca", views.get_key_from_ca, name="get_key_from_ca"),
+    path("vote", views.vote, name="vote"),
 
 ]

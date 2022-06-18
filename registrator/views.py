@@ -10,8 +10,16 @@ private_key = None
 
 
 def index(request):
+    from voter.views import get_voters_with_public_keys
     voters = User.objects.all()
-    return HttpResponse(render(request, 'registrator.html', {'voters': voters,
+    voters_public_keys = get_voters_with_public_keys()
+    for i in voters_public_keys:
+        voters_public_keys[i] = f'e={voters_public_keys[i].e} n={voters_public_keys[i].n}'
+    voters_with_public_keys = []
+    for i in voters:
+        voters_with_public_keys.append({'id': i.id, 'username': i.username, 'public_key': voters_public_keys.get(i.id)})
+
+    return HttpResponse(render(request, 'registrator.html', {'voters': voters_with_public_keys,
                                                              'public_key': None if public_key is None else f'e={public_key.e}\nn={public_key.n}',
                                                              'private_key': None if private_key is None else f'e={private_key.e}\nn={private_key.n}\n'
                                                                                                              f'p={private_key.p}\nq={private_key.q}\nd={private_key.d}'}))
