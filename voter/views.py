@@ -1,14 +1,21 @@
+import os
+
 import rsa
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 
-from certification_authority.views import get_public_key, is_keys_exchanged
+from certification_authority.views import get_public_key, is_keys_exchanged, get_raw_ca_public_key
 from registrator.views import get_raw_registrator_public_key
+import pyaes
 
 voter_keys = {}
 votes = {}
+secret_keys = {}
+encrypted_ballots = {}
+blind_signed_ballots = {}
+signed_blind_signed_ballots = {}
 
 
 def index(request):
@@ -34,6 +41,16 @@ def index(request):
                                                                                 f'p={private_key.p}\n'
                                                                                 f'q={private_key.q}\n'
                                                                                 f'd={private_key.d}',
+                                'secret_key': None if secret_keys.get(request.user.id) is None else list(
+                                    secret_keys.get(request.user.id)),
+                                'encrypted_ballot': None if encrypted_ballots.get(request.user.id) is None else list(
+                                    encrypted_ballots.get(request.user.id)),
+                                'blind_signed_ballot': None if blind_signed_ballots.get(
+                                    request.user.id) is None else list(
+                                    blind_signed_ballots.get(request.user.id)),
+                                'signed_blind_signed_ballot': None if signed_blind_signed_ballots.get(
+                                    request.user.id) is None else list(
+                                    signed_blind_signed_ballots.get(request.user.id)),
                                 'public_ca_key': None if public_ca_key is None else f'e={public_ca_key.e}\n'
                                                                                     f'n={public_ca_key.n}',
                                 'vote': votes.get(request.user.id)}))
@@ -45,7 +62,7 @@ def user_login(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return render(request, 'voter.html')
+                return redirect('/voter')
             else:
                 return HttpResponse('Disabled account')
         else:
@@ -74,7 +91,7 @@ def generate_keys(request):
         if is_keys_exchanged() and voter_keys.get(request.user.id) is not None:
             return JsonResponse({'message': 'Keys have been exchanged'})
 
-        public_key, private_key = rsa.newkeys(128)
+        public_key, private_key = rsa.newkeys(512)
         voter_keys[request.user.id] = (public_key, private_key)
         return JsonResponse({'public_key': f'e={public_key.e}\nn={public_key.n}',
                              'private_key': f'e={private_key.e}\nn={private_key.n}\n'
@@ -99,6 +116,62 @@ def vote(request):
             return JsonResponse({'message': 'Generate your keys first'})
         if not is_keys_exchanged():
             return JsonResponse({'message': 'Keys have not been exchaned yet'})
-        else:
-            votes[request.user.id] = request.POST['candidate_id']
-            return JsonResponse({})
+        if encrypted_ballots.get(request.user.id) is not None:
+            return JsonResponse({'message': 'Ballot already encrypted'})
+
+        votes[request.user.id] = request.POST['candidate_id']
+        return JsonResponse({})
+
+
+def get_secret_key(request):
+    if encrypted_ballots.get(request.user.id) is not None:
+        return JsonResponse({'message': 'Ballot already encrypted'})
+
+    secret_keys[request.user.id] = os.urandom(16)
+
+    return JsonResponse({'secret_key': str(list(secret_keys[request.user.id]))})
+
+
+def encrypt_ballot(request):
+    if votes.get(request.user.id) is None:
+        return JsonResponse({'message': 'Vote first'})
+    if secret_keys.get(request.user.id) is None:
+        return JsonResponse({'message': 'Generate secret key first'})
+    if blind_signed_ballots.get(request.user.id) is not None:
+        return JsonResponse({'message': 'Ballot blind signed'})
+
+    aes = pyaes.AESModeOfOperationCTR(secret_keys[request.user.id])
+    ciphertext = aes.encrypt(votes[request.user.id])
+    encrypted_ballots[request.user.id] = ciphertext
+
+    return JsonResponse({'encrypted_ballot': str(list(ciphertext))})
+
+
+def blind_sign_ballot(request):
+    if votes.get(request.user.id) is None:
+        return JsonResponse({'message': 'Vote first'})
+    if secret_keys.get(request.user.id) is None:
+        return JsonResponse({'message': 'Generate secret key first'})
+    if encrypted_ballots.get(request.user.id) is None:
+        return JsonResponse({'message': 'Encrypt ballot first'})
+    if signed_blind_signed_ballots.get(request.user.id) is not None:
+        return JsonResponse({'message': 'Blind signed ballot signed'})
+    blind_signed_ballots[request.user.id] = get_raw_ca_public_key().blind(encrypted_ballots[request.user.id][0])
+
+    return JsonResponse({'blind_signed_ballot': str(list(blind_signed_ballots[request.user.id]))})
+
+
+def sign_blind_signed_ballot(request):
+    if votes.get(request.user.id) is None:
+        return JsonResponse({'message': 'Vote first'})
+    if secret_keys.get(request.user.id) is None:
+        return JsonResponse({'message': 'Generate secret key first'})
+    if encrypted_ballots.get(request.user.id) is None:
+        return JsonResponse({'message': 'Encrypt ballot first'})
+    if blind_signed_ballots.get(request.user.id) is None:
+        return JsonResponse({'message': 'Blind sign ballot first'})
+
+    signed_blind_signed_ballots[request.user.id] = rsa.sign(
+        str(blind_signed_ballots[request.user.id]).encode(), voter_keys[request.user.id][1], 'SHA-1')
+
+    return JsonResponse({'signed_blind_signed_ballot': str(list(signed_blind_signed_ballots[request.user.id]))})

@@ -31,7 +31,7 @@ def generate_keys(request):
         if is_keys_exchanged():
             return JsonResponse({'message': 'Keys have been exchanged'})
 
-        public_key, private_key = rsa.newkeys(128)
+        public_key, private_key = rsa.newkeys(512)
         return JsonResponse({'public_key': f'e={public_key.e}\nn={public_key.n}',
                              'private_key': f'e={private_key.e}\nn={private_key.n}\n'
                                             f'p={private_key.p}\nq={private_key.q}\nd={private_key.d}'})

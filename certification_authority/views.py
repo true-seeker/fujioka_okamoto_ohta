@@ -1,5 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from rsa import PublicKey
 
 public_key = None
 
@@ -27,6 +28,11 @@ def get_public_key(request):
         return JsonResponse({'message': 'Keys have not been exchaned yet'})
     else:
         return JsonResponse({'public_ca_key': {'e': str(public_key.e), 'n': str(public_key.n)}})
+
+
+def get_raw_ca_public_key() -> PublicKey:
+    from registrator.views import get_raw_registrator_public_key
+    return get_raw_registrator_public_key()
 
 
 def is_keys_exchanged():

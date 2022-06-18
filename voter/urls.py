@@ -12,5 +12,9 @@ urlpatterns = [
     path("generate_keys", views.generate_keys, name="generate_keys"),
     path("get_key_from_ca", views.get_key_from_ca, name="get_key_from_ca"),
     path("vote", views.vote, name="vote"),
+    path("get_secret_key", views.get_secret_key, name="get_secret_key"),
+    path("encrypt_ballot", views.encrypt_ballot, name="encrypt_ballot"),
+    path("blind_sign_ballot", views.blind_sign_ballot, name="blind_sign_ballot"),
+    path("sign_blind_signed_ballot", views.sign_blind_signed_ballot, name="sign_blind_signed_ballot"),
 
 ]

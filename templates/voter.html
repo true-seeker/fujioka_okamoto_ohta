@@ -48,6 +48,38 @@
                     </label>
                 </div>
             </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="get-secret-key">Get secret key</button>
+                <div {% if secret_key is None %} hidden {% endif %}id="secret-key-div">
+                    <p>Secret voter key:</p>
+                    <p id="secret-key">{{ secret_key }}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="encrypt-ballot-button" data-bs-toggle="tooltip" data-bs-placement="top" title="You cant regenerate secret key after encryption">Encrypt ballot</button>
+                <div {% if encrypted_ballot is None %} hidden {% endif %}id="encrypted-ballot-div">
+                    <p>Encrypted ballot:</p>
+                    <p id="encrypted-ballot">{{ encrypted_ballot }}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="blind-sign-button">Blind sign ballot</button>
+                <div {% if blind_signed_ballot is None %} hidden {% endif %}id="blind-signed-ballot-div">
+                    <p>Blind signed ballot:</p>
+                    <p id="blind-signed-ballot">{{ blind_signed_ballot }}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="sign-blind-sign-button">Sign blind signed ballot</button>
+                <div {% if signed_blind_signed_ballot is None %} hidden {% endif %}id="signed-blind-signed-ballot-div">
+                    <p>Signed blind signed ballot:</p>
+                    <p id="signed-blind-signed-ballot">{{ signed_blind_signed_ballot }}</p>
+                </div>
+            </div>
         </div>
 
     </div>
