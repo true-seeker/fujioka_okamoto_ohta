@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import rsa
+from rsa import VerificationError
 
 from certification_authority.views import is_keys_exchanged
 
@@ -49,3 +50,16 @@ def get_registrator_public_key(request):
 def get_raw_registrator_public_key():
     global public_key
     return public_key
+
+
+def sign_voter_ballot(request, voter_id, blind_signed_ballot, signed_blind_signed_ballot):
+    from voter.views import get_voter_public_key
+
+    try:
+        rsa.verify(str(blind_signed_ballot).encode(),
+                   signed_blind_signed_ballot,
+                   get_voter_public_key(voter_id))
+    except VerificationError:
+        return JsonResponse({'message': 'Verify error'})
+
+    return rsa.sign(str(blind_signed_ballot).encode(), private_key, 'SHA-1')

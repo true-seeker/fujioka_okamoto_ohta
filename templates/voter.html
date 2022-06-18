@@ -80,6 +80,22 @@
                     <p id="signed-blind-signed-ballot">{{ signed_blind_signed_ballot }}</p>
                 </div>
             </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="send-to-registrator-button">Send to registrator</button>
+                <div {% if registrator_signed_ballot is None %} hidden {% endif %}id="registrator-signed-ballot-div">
+                    <p>Registrator signed ballot:</p>
+                    <p id="registrator-signed-ballot">{{ registrator_signed_ballot }}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="generate-mark-button">Generate mark</button>
+                <div {% if mark is None %} hidden {% endif %}id="generate-mark-div">
+                    <p>Generated mark:</p>
+                    <p id="mark">{{ mark }}</p>
+                </div>
+            </div>
         </div>
 
     </div>

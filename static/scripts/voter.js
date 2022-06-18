@@ -37,6 +37,7 @@ $('#get-keys-from-ca-button').on('click', () => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('#ca-keys-div').removeAttr('hidden');
                 $('#public-ca-key').text(`e=${data.public_ca_key.e} n=${data.public_ca_key.n}`);
             }
@@ -46,8 +47,6 @@ $('#get-keys-from-ca-button').on('click', () => {
 
 $('.voter-choice-radio').on('click', (e) => {
     e.preventDefault();
-    console.log(e.target);
-    console.log(e.target.dataset.candidateId);
     $.ajax({
         url: 'vote',
         type: 'post',
@@ -61,6 +60,7 @@ $('.voter-choice-radio').on('click', (e) => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('.voter-choice-radio').prop('checked', false);
                 $(e.target).prop('checked', true);
             }
@@ -79,6 +79,7 @@ $('#get-secret-key').on('click', () => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('#secret-key-div').removeAttr('hidden');
                 $('#secret-key').text(data.secret_key);
             }
@@ -98,6 +99,7 @@ $('#encrypt-ballot-button').on('click', () => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('#encrypted-ballot-div').removeAttr('hidden');
                 $('#encrypted-ballot').text(data.encrypted_ballot);
             }
@@ -116,6 +118,7 @@ $('#blind-sign-button').on('click', () => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('#blind-signed-ballot-div').removeAttr('hidden');
                 $('#blind-signed-ballot').text(data.blind_signed_ballot);
             }
@@ -134,8 +137,47 @@ $('#sign-blind-sign-button').on('click', () => {
             if (data.message !== undefined) {
                 alert(data.message);
             } else {
+                console.log(data);
                 $('#signed-blind-signed-ballot-div').removeAttr('hidden');
                 $('#signed-blind-signed-ballot').text(data.signed_blind_signed_ballot);
+            }
+        }
+    });
+})
+
+$('#send-to-registrator-button').on('click', () => {
+    $.ajax({
+        url: 'send_to_registrator',
+        type: 'get',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+        success: function (data) {
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                console.log(data);
+                $('#registrator-signed-ballot-div').removeAttr('hidden');
+                $('#registrator-signed-ballot').text(data.registrator_signed_ballot);
+            }
+        }
+    });
+})
+
+$('#generate-mark-button').on('click', () => {
+    $.ajax({
+        url: 'generate_mark',
+        type: 'get',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+        success: function (data) {
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                console.log(data);
+                $('#generate-mark-div').removeAttr('hidden');
+                $('#mark').text(data.mark);
             }
         }
     });
