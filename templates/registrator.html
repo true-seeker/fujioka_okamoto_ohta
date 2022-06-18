@@ -32,19 +32,12 @@
             <div>
                 <h5>Registrator keys:</h5>
                 <button class="btn btn-primary mt-1" id="generate-keys-button">Generate</button>
-                {% if public_key is None %}
-                    <div hidden id="keys-div">
-                        <p>Public key:</p>
-                        <p id="public-key">{{ public_key }}</p>
-                        <p>Private key:</p>
-                        <p id="private-key">{{ private_key }}</p>
-                    </div>
-                {% else %}
+                <div {% if public_key is None %} hidden {% endif %} id="keys-div">
                     <p>Public key:</p>
                     <p id="public-key">{{ public_key }}</p>
                     <p>Private key:</p>
                     <p id="private-key">{{ private_key }}</p>
-                {% endif %}
+                </div>
             </div>
         </div>
     </div>

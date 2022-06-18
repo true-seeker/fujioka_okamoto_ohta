@@ -5,7 +5,31 @@
 {% endblock %}
 
 {% block body %}
+    <div class="mx-4  d-flex justify-content-center">
+        <div class="w-50">
+            <div>
+                <h5>Voter keys:</h5>
+                <button class="btn btn-primary mt-1" id="generate-keys-button">Generate</button>
+                <div {% if public_key is None %} hidden {% endif %} id="keys-div">
+                    <p>Public key:</p>
+                    <p id="public-key">{{ public_key }}</p>
+                    <p>Private key:</p>
+                    <p id="private-key">{{ private_key }}</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <h5>Get public key from CA</h5>
+                <button class="btn btn-primary mt-1" id="get-keys-from-ca-button">Get key</button>
+                <div {% if public_ca_key is None %} hidden {% endif %}id="ca-keys-div">
+                    <p>Public CA key:</p>
+                    <p id="public-ca-key">{{ public_ca_key }}</p>
+                </div>
 
-    <script src="{% static 'scripts/voter.js' %}"></script>
+            </div>
+        </div>
+
+    </div>
+    <script type="module" src="{% static 'scripts/voter.js' %}"></script>
 
 {% endblock %}

@@ -5,7 +5,19 @@
 {% endblock %}
 
 {% block body %}
+    <div class="mx-4  d-flex justify-content-center">
+        <div class="w-50">
+            <div>
+                <h5>Public registrator key:</h5>
+                <button class="btn btn-primary mt-1" id="get-keys-from-registrator" data-bs-toggle="tooltip" data-bs-placement="top" title="You cant regenerate keys after exchange">Exchange keys</button>
 
-    <script src="{% static 'scripts/certification_authority.js' %}"></script>
+                <div {% if public_ca_key is None %} hidden {% endif %} id="keys-div">
+                    <p>Public CA key:</p>
+                    <p id="public-ca-key">{{ public_ca_key }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="{% static 'scripts/certification_authority.js' %}"></script>
 
 {% endblock %}

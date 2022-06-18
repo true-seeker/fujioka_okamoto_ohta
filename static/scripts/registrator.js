@@ -19,10 +19,14 @@ $('#generate-keys-button').on('click', () => {
         },
         // dataType: 'json',
         success: function (data) {
-            console.log(data);
-            $('#keys-div').removeAttr('hidden');
-            $('#public-key').text(data.public_key);
-            $('#private-key').text(data.private_key);
+            if (data.message !== undefined) {
+                alert(data.message)
+            } else {
+                console.log(data);
+                $('#keys-div').removeAttr('hidden');
+                $('#public-key').text(data.public_key);
+                $('#private-key').text(data.private_key);
+            }
         }
     });
 })
