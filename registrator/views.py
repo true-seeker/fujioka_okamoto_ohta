@@ -22,3 +22,9 @@ def generate_keys(request):
         return JsonResponse({'public_key': f'e={public_key.e}\nn={public_key.n}',
                              'private_key': f'e={private_key.e}\nn={private_key.n}\n'
                                             f'p={private_key.p}\nq={private_key.q}\nd={private_key.d}'})
+
+
+def get_public_key(request):
+    global public_key, private_key
+    if request.method == 'GET':
+        return JsonResponse({'public_key': {'e': public_key.e, 'n': public_key.n}})
