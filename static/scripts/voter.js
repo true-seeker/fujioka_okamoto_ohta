@@ -182,3 +182,39 @@ $('#generate-mark-button').on('click', () => {
         }
     });
 })
+
+$('#send-to-vote-counter-button').on('click', () => {
+    $.ajax({
+        url: 'send_to_vote_counter',
+        type: 'post',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+        success: function (data) {
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                console.log(data);
+                $('#is-sent-to-vote-counter-div').removeAttr('hidden');
+            }
+        }
+    });
+})
+
+$('#send-secret-key-to-voter-button').on('click', () => {
+    $.ajax({
+        url: 'send_secret_key_to_voter',
+        type: 'post',
+        headers: {
+            'X-CSRFToken': csrftoken,
+        },
+        success: function (data) {
+            if (data.message !== undefined) {
+                alert(data.message);
+            } else {
+                console.log(data);
+                $('#is-secret-key-sent-to-vote-counter-div').removeAttr('hidden');
+            }
+        }
+    });
+})

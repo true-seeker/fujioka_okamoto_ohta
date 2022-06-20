@@ -18,5 +18,7 @@ urlpatterns = [
     path("sign_blind_signed_ballot", views.sign_blind_signed_ballot, name="sign_blind_signed_ballot"),
     path("send_to_registrator", views.send_to_registrator, name="send_to_registrator"),
     path("generate_mark", views.generate_mark, name="generate_mark"),
+    path("send_to_vote_counter", views.send_to_vote_counter, name="send_to_vote_counter"),
+    path("send_secret_key_to_voter", views.send_secret_key_to_voter, name="send_secret_key_to_voter"),
 
 ]

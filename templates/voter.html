@@ -96,6 +96,20 @@
                     <p id="mark">{{ mark }}</p>
                 </div>
             </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="send-to-vote-counter-button">Send to vote counter</button>
+                <div {% if is_sent_to_vote_counter is None %} hidden {% endif %}id="is-sent-to-vote-counter-div">
+                    <p>Vote has been sent to Vote Counter</p>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary mt-1" id="send-secret-key-to-voter-button">Send secret key to voter</button>
+                <div {% if is_secret_key_sent is None %} hidden {% endif %}id="is-secret-key-sent-to-vote-counter-div">
+                    <p>Your secret key has been sent to Vote Counter</p>
+                </div>
+            </div>
         </div>
 
     </div>

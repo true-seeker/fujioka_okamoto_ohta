@@ -5,6 +5,53 @@
 {% endblock %}
 
 {% block body %}
+    <div class="mx-4  d-flex justify-content-center">
+        <div class="w-50">
+            <div class="d-flex justify-content-between">
+                <h5>Encrypted votes: </h5>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Mark</th>
+                    <th scope="col">Ben</th>
+                    <th scope="col">DSen</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for encrypted_vote in encrypted_votes %}
+                    <tr>
+                        <th scope="row">{{ encrypted_vote.mark }}</th>
+                        <td>{{ encrypted_vote.encrypted_ballot }}</td>
+                        <td>{{ encrypted_vote.hidden_encrypted_ballot }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <h5>Decrypted votes: </h5>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Mark</th>
+                    <th scope="col">Secret key</th>
+                    <th scope="col">Vote</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for decrypted_vote in decrypted_votes %}
+                    <tr>
+                        <th scope="row">{{ decrypted_vote.mark }}</th>
+                        <td>{{ decrypted_vote.secret_key }}</td>
+                        <td>{{ decrypted_vote.ballot }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script src="{% static 'scripts/vote_counter.js' %}"></script>
 

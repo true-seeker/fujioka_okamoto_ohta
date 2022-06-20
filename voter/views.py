@@ -11,7 +11,8 @@ from rsa import PublicKey
 
 from certification_authority.views import get_public_key, is_keys_exchanged, get_raw_ca_public_key
 from registrator.views import get_raw_registrator_public_key, sign_voter_ballot
-from utilities import bytes_to_int
+from utilities import bytes_to_int, int_to_bytes
+from vote_counter.views import accept_vote_from_voter, accept_secret_key_from_voter
 
 voter_keys = {}
 votes = {}
@@ -21,6 +22,8 @@ blind_signed_ballots = {}
 signed_blind_signed_ballots = {}
 registrator_signed_ballots = {}
 marks = {}
+is_sent_to_vote_counter = {}
+is_secret_key_sent = {}
 
 
 def index(request):
@@ -57,8 +60,11 @@ def index(request):
                                     request.user.id) is None else list(
                                     signed_blind_signed_ballots.get(request.user.id)),
                                 'registrator_signed_ballot': None if registrator_signed_ballots.get(
-                                    request.user.id) is None else list(
-                                    registrator_signed_ballots.get(request.user.id)),
+                                    request.user.id) is None else registrator_signed_ballots.get(request.user.id),
+                                'is_sent_to_vote_counter': None if is_sent_to_vote_counter.get(
+                                    request.user.id) is None else is_sent_to_vote_counter.get(request.user.id),
+                                'is_secret_key_sent': None if is_secret_key_sent.get(
+                                    request.user.id) is None else is_secret_key_sent.get(request.user.id),
                                 'mark': None if marks.get(request.user.id) is None else marks.get(request.user.id),
                                 'public_ca_key': None if public_ca_key is None else f'e={public_ca_key.e}\n'
                                                                                     f'n={public_ca_key.n}',
@@ -208,3 +214,24 @@ def generate_mark(request):
     mark = random.randint(2, 2 ** 64)
     marks[request.user.id] = mark
     return JsonResponse({'mark': str(mark)})
+
+
+def send_to_vote_counter(request):
+    if request.method == 'POST':
+        is_ok = accept_vote_from_voter(marks[request.user.id], encrypted_ballots[request.user.id],
+                                       int_to_bytes(registrator_signed_ballots[request.user.id]))
+        if is_ok:
+            is_sent_to_vote_counter[request.user.id] = True
+            return JsonResponse({})
+        else:
+            return JsonResponse({'message': "Vote counter error"})
+
+
+def send_secret_key_to_voter(request):
+    if request.method == 'POST':
+        is_ok = accept_secret_key_from_voter(marks[request.user.id], secret_keys[request.user.id])
+        if is_ok:
+            is_secret_key_sent[request.user.id] = True
+            return JsonResponse({})
+        else:
+            return JsonResponse({'message': "Vote counter error"})
